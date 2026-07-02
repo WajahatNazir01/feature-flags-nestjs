@@ -42,45 +42,69 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.FeatureFlagsService = void 0;
+exports.TenantsService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma.service");
 const crypto = __importStar(require("crypto"));
-let FeatureFlagsService = class FeatureFlagsService {
+let TenantsService = class TenantsService {
     prisma;
     constructor(prisma) {
         this.prisma = prisma;
     }
-    async createFlag(createFlagDto) {
-        const { key, description, tenantId } = createFlagDto;
-        const existingFlags = await this.prisma.$queryRaw `
-      SELECT * FROM "FeatureFlag" 
-      WHERE "key" = ${key} AND "tenantId" = ${tenantId}
-    `;
-        if (existingFlags && existingFlags.length > 0) {
-            throw new common_1.ConflictException(`Flag key '${key}' already exists for this tenant.`);
-        }
-        const newId = crypto.randomUUID();
-        await this.prisma.$executeRaw `
-      INSERT INTO "FeatureFlag" ("id", "key", "description", "tenantId", "createdAt")
-      VALUES (${newId}, ${key}, ${description || null}, ${tenantId}, NOW())
-    `;
-        return {
-            id: newId,
-            key,
-            description,
-            tenantId,
-        };
+    async create(createTenantDto) {
+        return this.prisma.tenant.create({
+            data: {
+                name: createTenantDto.name,
+                environments: {
+                    create: [
+                        {
+                            name: 'Development',
+                            apiKey: crypto.randomUUID(),
+                        },
+                        {
+                            name: 'Production',
+                            apiKey: crypto.randomUUID(),
+                        },
+                    ],
+                },
+            },
+            include: {
+                environments: true,
+            },
+        });
     }
-    async getTenantFlags(tenantId) {
-        return await this.prisma.$queryRaw `
-      SELECT * FROM "FeatureFlag" WHERE "tenantId" = ${tenantId}
-    `;
+    async findAll() {
+        return this.prisma.tenant.findMany({
+            include: {
+                environments: true,
+            },
+        });
+    }
+    async findOne(id) {
+        return this.prisma.tenant.findUnique({
+            where: { id },
+            include: {
+                environments: true,
+            },
+        });
+    }
+    async update(id, updateTenantDto) {
+        return this.prisma.tenant.update({
+            where: { id },
+            data: {
+                name: updateTenantDto.name,
+            },
+        });
+    }
+    async remove(id) {
+        return this.prisma.tenant.delete({
+            where: { id },
+        });
     }
 };
-exports.FeatureFlagsService = FeatureFlagsService;
-exports.FeatureFlagsService = FeatureFlagsService = __decorate([
+exports.TenantsService = TenantsService;
+exports.TenantsService = TenantsService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService])
-], FeatureFlagsService);
-//# sourceMappingURL=feature-flags.service.js.map
+], TenantsService);
+//# sourceMappingURL=tenants.service.js.map

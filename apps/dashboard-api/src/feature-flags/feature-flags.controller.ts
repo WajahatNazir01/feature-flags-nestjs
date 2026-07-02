@@ -1,17 +1,20 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+
+
+import { Controller, Post, Get, Body, Query } from '@nestjs/common';
 import { FeatureFlagsService } from './feature-flags.service';
+import { CreateFeatureFlagDto } from './dto/create-flag.dto';
 
 @Controller('feature-flags')
 export class FeatureFlagsController {
   constructor(private readonly featureFlagsService: FeatureFlagsService) {}
 
   @Post()
-  async create(@Body() body: { key: string; description?: string }) {
-    return this.featureFlagsService.createFlag(body);
+  create(@Body() createFeatureFlagDto: CreateFeatureFlagDto) {
+    return this.featureFlagsService.createFlag(createFeatureFlagDto);
   }
 
   @Get()
-  async findAll() {
-    return this.featureFlagsService.getAllFlags();
+  findAll(@Query('tenantId') tenantId: string) {
+    return this.featureFlagsService.getTenantFlags(tenantId);
   }
 }

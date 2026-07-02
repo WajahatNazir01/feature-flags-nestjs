@@ -1,28 +1,13 @@
 import { PrismaService } from '../prisma.service';
+import { CreateFeatureFlagDto } from './dto/create-flag.dto';
 export declare class FeatureFlagsService {
     private prisma;
     constructor(prisma: PrismaService);
-    createFlag(data: {
+    createFlag(createFlagDto: CreateFeatureFlagDto): Promise<{
+        id: `${string}-${string}-${string}-${string}-${string}`;
         key: string;
-        description?: string;
-    }): Promise<{
-        id: string;
-        key: string;
-        description: string | null;
-        createdAt: Date;
+        description: string | undefined;
+        tenantId: string;
     }>;
-    getAllFlags(): Promise<({
-        statuses: {
-            id: string;
-            environmentId: string;
-            flagId: string;
-            isEnabled: boolean;
-            rules: import("@prisma/client/runtime/client").JsonValue | null;
-        }[];
-    } & {
-        id: string;
-        key: string;
-        description: string | null;
-        createdAt: Date;
-    })[]>;
+    getTenantFlags(tenantId: string): Promise<any>;
 }
