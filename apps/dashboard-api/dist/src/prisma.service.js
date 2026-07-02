@@ -13,18 +13,23 @@ exports.PrismaService = void 0;
 const common_1 = require("@nestjs/common");
 const client_1 = require("@prisma/client");
 const adapter_pg_1 = require("@prisma/adapter-pg");
+const pg_1 = require("pg");
 let PrismaService = class PrismaService extends client_1.PrismaClient {
     constructor() {
-        const adapter = new adapter_pg_1.PrismaPg({
-            connectionString: process.env.DATABASE_URL,
+        const connectionUri = process.env.DATABASE_URL
+            ? String(process.env.DATABASE_URL).trim()
+            : 'postgresql://dev_user:dev_password@localhost:5432/flag_db?schema=public';
+        const pool = new pg_1.Pool({
+            connectionString: connectionUri,
         });
+        const adapter = new adapter_pg_1.PrismaPg(pool);
         super({
             adapter,
         });
     }
     async onModuleInit() {
         await this.$connect();
-        console.log('✅ Connected to PostgreSQL');
+        console.log('✅ Connected safely to PostgreSQL');
     }
     async onModuleDestroy() {
         await this.$disconnect();
