@@ -1,0 +1,17 @@
+{
+  "name": "nest-feature-flags-handler/ssdk-core",
+  "version": "1.0.0",
+  "description": "Lightweight Real-time Feature Flags SDK Client",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch"
+  },
+  "dependencies": {
+    "socket.io-client": "^4.7.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

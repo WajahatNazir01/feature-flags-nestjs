@@ -1,7 +1,8 @@
-import { Controller, Post, Get, Body, Query } from '@nestjs/common';
+import { Controller, Post, Get, Body, Query, UseGuards } from '@nestjs/common';
 import { FeatureFlagsService } from './feature-flags.service';
 import { CreateFeatureFlagDto } from './dto/create-flag.dto';
 import { ToggleFlagDto } from './dto/toggle-flag.dto';
+import { TenantGuard } from './tenant.guard';
 
 @Controller('feature-flags')
 export class FeatureFlagsController {
@@ -22,6 +23,7 @@ export class FeatureFlagsController {
   }
   // 👈 SDK Client Evaluation Route
   @Get('evaluate')
+  @UseGuards(TenantGuard)
   async evaluateFlag(
     @Query('apiKey') apiKey: string,
     @Query('key') key: string,

@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const feature_flags_service_1 = require("./feature-flags.service");
 const create_flag_dto_1 = require("./dto/create-flag.dto");
 const toggle_flag_dto_1 = require("./dto/toggle-flag.dto");
+const tenant_guard_1 = require("./tenant.guard");
 let FeatureFlagsController = class FeatureFlagsController {
     featureFlagsService;
     constructor(featureFlagsService) {
@@ -59,6 +60,7 @@ __decorate([
 ], FeatureFlagsController.prototype, "toggleStatus", null);
 __decorate([
     (0, common_1.Get)('evaluate'),
+    (0, common_1.UseGuards)(tenant_guard_1.TenantGuard),
     __param(0, (0, common_1.Query)('apiKey')),
     __param(1, (0, common_1.Query)('key')),
     __metadata("design:type", Function),
