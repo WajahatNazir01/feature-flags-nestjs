@@ -16,4 +16,8 @@ export declare class FeatureFlagsController {
         environmentId: string;
         isEnabled: boolean;
     }>;
+    evaluateFlag(apiKey: string, key: string): Promise<{
+        key: string;
+        isEnabled: any;
+    }>;
 }

@@ -41,11 +41,19 @@ var __importStar = (this && this.__importStar) || (function () {
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FeatureFlagsService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma.service");
 const crypto = __importStar(require("crypto"));
+const ioredis_1 = __importDefault(require("ioredis"));
+const redisPub = new ioredis_1.default({
+    host: 'localhost',
+    port: 6379,
+});
 let FeatureFlagsService = class FeatureFlagsService {
     prisma;
     constructor(prisma) {
@@ -80,6 +88,14 @@ let FeatureFlagsService = class FeatureFlagsService {
     async toggleFlagStatus(dto) {
         const { flagId, environmentId, isEnabled } = dto;
         const statusId = crypto.randomUUID();
+        const flagLookup = await this.prisma.$queryRaw `
+      SELECT "key", "tenantId" FROM "FeatureFlag" WHERE "id" = ${flagId}
+    `;
+        if (!flagLookup || flagLookup.length === 0) {
+            throw new common_1.ConflictException(`Feature flag with ID '${flagId}' not found.`);
+        }
+        const flagKey = flagLookup[0].key;
+        const tenantId = flagLookup[0].tenantId;
         const existingStatus = await this.prisma.$queryRaw `
       SELECT * FROM "FlagStatus" 
       WHERE "flagId" = ${flagId} AND "environmentId" = ${environmentId}
@@ -97,7 +113,29 @@ let FeatureFlagsService = class FeatureFlagsService {
         VALUES (${statusId}, ${flagId}, ${environmentId}, ${isEnabled})
       `;
         }
+        await redisPub.publish('feature-flag-updates', JSON.stringify({
+            tenantId,
+            key: flagKey,
+            isEnabled,
+        }));
+        console.log(`📣 Published flag update to Redis for channel: feature-flag-updates`);
         return { flagId, environmentId, isEnabled };
+    }
+    async evaluateClientFlag(apiKey, key) {
+        const result = await this.prisma.$queryRaw `
+      SELECT s."isEnabled" 
+      FROM "FlagStatus" s
+      JOIN "FeatureFlag" f ON s."flagId" = f.id
+      JOIN "Environment" e ON s."environmentId" = e.id
+      WHERE e."apiKey" = ${apiKey} AND f."key" = ${key}
+    `;
+        if (!result || result.length === 0) {
+            return { key, isEnabled: false };
+        }
+        return {
+            key,
+            isEnabled: result[0].isEnabled,
+        };
     }
 };
 exports.FeatureFlagsService = FeatureFlagsService;

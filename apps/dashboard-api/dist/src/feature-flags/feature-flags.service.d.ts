@@ -16,4 +16,8 @@ export declare class FeatureFlagsService {
         environmentId: string;
         isEnabled: boolean;
     }>;
+    evaluateClientFlag(apiKey: string, key: string): Promise<{
+        key: string;
+        isEnabled: any;
+    }>;
 }

@@ -7,10 +7,10 @@ export declare class TenantsService {
     create(createTenantDto: CreateTenantDto): Promise<{
         environments: {
             tenantId: string;
+            apiKey: string;
             id: string;
             name: string;
             createdAt: Date;
-            apiKey: string;
         }[];
     } & {
         id: string;
@@ -20,10 +20,10 @@ export declare class TenantsService {
     findAll(): Promise<({
         environments: {
             tenantId: string;
+            apiKey: string;
             id: string;
             name: string;
             createdAt: Date;
-            apiKey: string;
         }[];
     } & {
         id: string;
@@ -33,10 +33,10 @@ export declare class TenantsService {
     findOne(id: string): Promise<({
         environments: {
             tenantId: string;
+            apiKey: string;
             id: string;
             name: string;
             createdAt: Date;
-            apiKey: string;
         }[];
     } & {
         id: string;

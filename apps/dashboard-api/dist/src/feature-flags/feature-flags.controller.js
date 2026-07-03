@@ -31,6 +31,9 @@ let FeatureFlagsController = class FeatureFlagsController {
     toggleStatus(toggleFlagDto) {
         return this.featureFlagsService.toggleFlagStatus(toggleFlagDto);
     }
+    async evaluateFlag(apiKey, key) {
+        return this.featureFlagsService.evaluateClientFlag(apiKey, key);
+    }
 };
 exports.FeatureFlagsController = FeatureFlagsController;
 __decorate([
@@ -54,6 +57,14 @@ __decorate([
     __metadata("design:paramtypes", [toggle_flag_dto_1.ToggleFlagDto]),
     __metadata("design:returntype", void 0)
 ], FeatureFlagsController.prototype, "toggleStatus", null);
+__decorate([
+    (0, common_1.Get)('evaluate'),
+    __param(0, (0, common_1.Query)('apiKey')),
+    __param(1, (0, common_1.Query)('key')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", Promise)
+], FeatureFlagsController.prototype, "evaluateFlag", null);
 exports.FeatureFlagsController = FeatureFlagsController = __decorate([
     (0, common_1.Controller)('feature-flags'),
     __metadata("design:paramtypes", [feature_flags_service_1.FeatureFlagsService])

@@ -20,4 +20,12 @@ export class FeatureFlagsController {
   toggleStatus(@Body() toggleFlagDto: ToggleFlagDto) {
     return this.featureFlagsService.toggleFlagStatus(toggleFlagDto);
   }
+  // 👈 SDK Client Evaluation Route
+  @Get('evaluate')
+  async evaluateFlag(
+    @Query('apiKey') apiKey: string,
+    @Query('key') key: string,
+  ) {
+    return this.featureFlagsService.evaluateClientFlag(apiKey, key);
+  }
 }

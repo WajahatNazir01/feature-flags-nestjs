@@ -1,10 +1,8 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { RedisService } from './redis.sevice';
+import { StreamingGateway } from './streaming.gateway';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  providers: [RedisService, StreamingGateway],
 })
 export class AppModule {}
