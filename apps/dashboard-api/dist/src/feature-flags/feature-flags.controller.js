@@ -16,6 +16,7 @@ exports.FeatureFlagsController = void 0;
 const common_1 = require("@nestjs/common");
 const feature_flags_service_1 = require("./feature-flags.service");
 const create_flag_dto_1 = require("./dto/create-flag.dto");
+const toggle_flag_dto_1 = require("./dto/toggle-flag.dto");
 let FeatureFlagsController = class FeatureFlagsController {
     featureFlagsService;
     constructor(featureFlagsService) {
@@ -26,6 +27,9 @@ let FeatureFlagsController = class FeatureFlagsController {
     }
     findAll(tenantId) {
         return this.featureFlagsService.getTenantFlags(tenantId);
+    }
+    toggleStatus(toggleFlagDto) {
+        return this.featureFlagsService.toggleFlagStatus(toggleFlagDto);
     }
 };
 exports.FeatureFlagsController = FeatureFlagsController;
@@ -43,6 +47,13 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], FeatureFlagsController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Post)('toggle'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [toggle_flag_dto_1.ToggleFlagDto]),
+    __metadata("design:returntype", void 0)
+], FeatureFlagsController.prototype, "toggleStatus", null);
 exports.FeatureFlagsController = FeatureFlagsController = __decorate([
     (0, common_1.Controller)('feature-flags'),
     __metadata("design:paramtypes", [feature_flags_service_1.FeatureFlagsService])

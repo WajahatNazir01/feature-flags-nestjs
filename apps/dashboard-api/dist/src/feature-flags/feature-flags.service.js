@@ -77,6 +77,28 @@ let FeatureFlagsService = class FeatureFlagsService {
       SELECT * FROM "FeatureFlag" WHERE "tenantId" = ${tenantId}
     `;
     }
+    async toggleFlagStatus(dto) {
+        const { flagId, environmentId, isEnabled } = dto;
+        const statusId = crypto.randomUUID();
+        const existingStatus = await this.prisma.$queryRaw `
+      SELECT * FROM "FlagStatus" 
+      WHERE "flagId" = ${flagId} AND "environmentId" = ${environmentId}
+    `;
+        if (existingStatus && existingStatus.length > 0) {
+            await this.prisma.$executeRaw `
+        UPDATE "FlagStatus" 
+        SET "isEnabled" = ${isEnabled}
+        WHERE "flagId" = ${flagId} AND "environmentId" = ${environmentId}
+      `;
+        }
+        else {
+            await this.prisma.$executeRaw `
+        INSERT INTO "FlagStatus" ("id", "flagId", "environmentId", "isEnabled")
+        VALUES (${statusId}, ${flagId}, ${environmentId}, ${isEnabled})
+      `;
+        }
+        return { flagId, environmentId, isEnabled };
+    }
 };
 exports.FeatureFlagsService = FeatureFlagsService;
 exports.FeatureFlagsService = FeatureFlagsService = __decorate([

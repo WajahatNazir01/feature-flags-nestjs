@@ -1,5 +1,6 @@
 import { PrismaService } from '../prisma.service';
 import { CreateFeatureFlagDto } from './dto/create-flag.dto';
+import { ToggleFlagDto } from './dto/toggle-flag.dto';
 export declare class FeatureFlagsService {
     private prisma;
     constructor(prisma: PrismaService);
@@ -10,4 +11,9 @@ export declare class FeatureFlagsService {
         tenantId: string;
     }>;
     getTenantFlags(tenantId: string): Promise<any>;
+    toggleFlagStatus(dto: ToggleFlagDto): Promise<{
+        flagId: string;
+        environmentId: string;
+        isEnabled: boolean;
+    }>;
 }
