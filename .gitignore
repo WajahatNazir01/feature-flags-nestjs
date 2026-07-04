@@ -1,35 +1,28 @@
-# Dependency directories
+# Dependencies
 node_modules/
-/dist/
-/build/
 
-# Local environment files (Contains database passwords & API keys)
+# Environment variables
 .env
 .env.local
-.env.*.local
 
-# Prisma-specific generated files
-/apps/dashboard-api/prisma/migrations/
-*.db
-*.db-journal
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
 
-# Docker & OS files
-.docker/
+# Build output
+dist/
+build/
+
+# Coverage
+coverage/
+
+# OS files
 .DS_Store
 Thumbs.db
 
-# IDE configuration files
+# IDE
 .vscode/
 .idea/
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.swp
-
-# Log files
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-logs/
-*.log

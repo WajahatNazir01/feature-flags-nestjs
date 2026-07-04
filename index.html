@@ -1,0 +1,477 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Your Account</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <style>
+        .transition-all { transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+    </style>
+</head>
+<body id="app-body" class="bg-slate-50 min-h-screen flex items-center justify-center p-6 transition-all">
+
+    <div id="signup-card" class="bg-white max-w-md w-full rounded-2xl shadow-xl shadow-slate-200/50 p-8 border border-slate-100 transition-all">
+        
+        <div class="text-center mb-8">
+            <h1 id="main-heading" class="text-3xl font-bold text-slate-800 tracking-tight">Get Started</h1>
+            <p id="sub-heading" class="text-slate-500 mt-2 text-sm">Create your multi-tenant workspace account</p>
+        </div>
+
+        <div id="google-sso-container" class="hidden mb-5">
+            <button class="w-full flex items-center justify-center gap-3 bg-white border border-slate-200 text-slate-700 font-medium py-2.5 px-4 rounded-xl hover:bg-slate-50 hover:border-slate-300 active:scale-[0.99] transition duration-200 text-sm shadow-sm">
+                <svg class="w-5 h-5" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                Sign up with Google
+            </button>
+            <div class="relative flex py-4 items-center">
+                <div class="flex-grow border-t border-slate-200"></div>
+                <span class="flex-shrink mx-4 text-xs text-slate-400 uppercase tracking-wider font-semibold">Or email</span>
+                <div class="flex-grow border-t border-slate-200"></div>
+            </div>
+        </div>
+
+        <form class="space-y-4" onsubmit="event.preventDefault(); alert('Account compiled successfully!');">
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">Full Name</label>
+                <input type="text" placeholder="Ali Khan" class="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-500 focus:bg-white transition duration-200">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">Email Address</label>
+                <input type="email" placeholder="alikhan123@gmail.com" class="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-500 focus:bg-white transition duration-200">
+            </div>
+            <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 rounded-xl active:scale-[0.99] transition duration-200 text-sm mt-4 shadow-md shadow-indigo-100">
+                Create Account
+            </button>
+        </form>
+    </div>
+
+    <script>
+        // 1. Fetch configuration on layout startup mount
+        async function fetchConfig() {
+            const res = await fetch('/api/config');
+            const config = await res.json();
+            applyUILayout(config.googleSignupEnabled, config.premiumDarkTheme);
+        }
+
+        // 2. Manipulate DOM styling nodes directly based on flag state responses
+        function applyUILayout(googleEnabled, darkTheme) {
+    const body = document.getElementById('app-body');
+    const card = document.getElementById('signup-card');
+    const h1 = document.getElementById('main-heading');
+    const sso = document.getElementById('google-sso-container');
+
+    // 1. Manage Google button visibility
+    if (googleEnabled) {
+        sso.classList.remove('hidden');
+    } else {
+        sso.classList.add('hidden');
+    }
+
+    // 2. Let's make 'googleEnabled' change the dark theme too so you can see the instant transition!
+    if (googleEnabled || darkTheme) { 
+        body.className = "bg-slate-950 min-h-screen flex items-center justify-center p-6 transition-all";
+        card.className = "bg-slate-900 max-w-md w-full rounded-2xl shadow-2xl shadow-black/50 p-8 border border-slate-800/80 transition-all text-white";
+        h1.className = "text-3xl font-bold text-white tracking-tight";
+    } else {
+        body.className = "bg-slate-50 min-h-screen flex items-center justify-center p-6 transition-all";
+        card.className = "bg-white max-w-md w-full rounded-2xl shadow-xl shadow-slate-200/50 p-8 border border-slate-100 transition-all";
+        h1.className = "text-3xl font-bold text-slate-800 tracking-tight";
+    }
+}
+
+        // 3. Connect to streaming-server on port 3005 for instant real-time sync UI updates!
+        const socket = io('http://localhost:3005', { query: { tenantId: "bfb97b64-5c80-419b-83c8-683646cc503f" } });
+        
+        socket.on('flagUpdated', (data) => {
+            console.log("📡 Live Stream UI update received:", data);
+            // Refresh configurations dynamically when an update event drops
+            fetchConfig();
+        });
+
+        // Initial launch load
+        fetchConfig();
+    </script>
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Your Account</title>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <style>
+        /* Global CSS Foundations Reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            transition: background-color 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Core Light Theme State */
+        .theme-light {
+            background-color: #f8fafc;
+            color: #334155;
+        }
+
+        /* Core Premium Dark Theme State */
+        .theme-dark {
+            background-color: #020617;
+            color: #f8fafc;
+        }
+
+        /* 🟩 CREATIVE CUSTOM BANNER STYLE (Controlled via flag: banner-showing-flag) */
+        #feature-flag-banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            background: linear-gradient(135deg, #7c3aed, #4f46e5, #9333ea);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transform: translateY(-100%);
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        #feature-flag-banner.show {
+            transform: translateY(0);
+        }
+
+        .banner-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 14px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            position: relative;
+        }
+
+        /* Glowing Neon Ping Animation Handle */
+        .glow-pulse {
+            width: 10px;
+            height: 10px;
+            background-color: #10b981;
+            border-radius: 50%;
+            position: relative;
+            box-shadow: 0 0 10px #34d399;
+        }
+
+        .glow-pulse::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: #34d399;
+            border-radius: 50%;
+            animation: pingEffect 1.5s infinite ease-in-out;
+        }
+
+        @keyframes pingEffect {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(3); opacity: 0; }
+        }
+
+        .banner-text {
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            color: #ffffff;
+            text-align: center;
+        }
+
+        /* Signup Layout Card Container Structure */
+        .signup-container {
+            width: 100%;
+            max-width: 420px;
+            border-radius: 20px;
+            padding: 40px 32px;
+            margin-top: 60px;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-light {
+            background-color: #ffffff;
+            border: 1px solid #f1f5f9;
+            box-shadow: 0 20px 25px -5px rgba(148, 163, 184, 0.1), 0 10px 10px -5px rgba(148, 163, 184, 0.04);
+        }
+
+        .card-dark {
+            background-color: #0f172a;
+            border: 1px solid rgba(51, 65, 85, 0.5);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .text-title {
+            font-size: 28px;
+            font-weight: 700;
+            text-align: center;
+            letter-spacing: -0.5px;
+            margin-bottom: 6px;
+        }
+
+        .text-desc {
+            font-size: 14px;
+            color: #94a3b8;
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        /* GOOGLE SSO INTERFACE COMPONENTS */
+        #google-sso-container {
+            display: none;
+            flex-direction: column;
+            margin-bottom: 24px;
+        }
+
+        .google-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            color: #334155;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            transition: all 0.2s;
+        }
+
+        .google-btn:hover {
+            background-color: #f8fafc;
+            border-color: #cbd5e1;
+        }
+
+        .google-btn:active {
+            transform: scale(0.99);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            color: #94a3b8;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .divider::before, .divider::after {
+            content: '';
+            flex-grow: 1;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .card-dark .divider::before, .card-dark .divider::after {
+            border-color: #334155;
+        }
+
+        .divider span {
+            padding: 0 12px;
+        }
+
+        /* Custom Form Controls Blocks */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+
+        .card-dark .form-label {
+            color: #94a3b8;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 14px;
+            border-radius: 12px;
+            outline: none;
+            transition: all 0.2s;
+            background-color: rgba(248, 250, 252, 0.8);
+            border: 1px solid #e2e8f0;
+            color: inherit;
+        }
+
+        .card-dark .form-input {
+            background-color: rgba(15, 23, 42, 0.6);
+            border-color: #334155;
+        }
+
+        .form-input:focus {
+            border-color: #6366f1;
+            background-color: #ffffff;
+        }
+
+        .card-dark .form-input:focus {
+            background-color: #0f172a;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background-color: #4f46e5;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
+            transition: all 0.2s;
+            margin-top: 12px;
+        }
+
+        .submit-btn:hover {
+            background-color: #4338ca;
+        }
+
+        .submit-btn:active {
+            transform: scale(0.99);
+        }
+    </style>
+</head>
+<body id="app-body" class="theme-light">
+
+    <div id="feature-flag-banner">
+        <div class="banner-content">
+            <div class="glow-pulse"></div>
+            <p class="banner-text">
+                ✨ <strong>Exclusive Notification:</strong> Aesthetic moving workspace elements unlocked seamlessly via custom configuration server engines!
+            </p>
+        </div>
+    </div>
+
+    <div id="signup-card" class="signup-container card-light">
+        
+        <div class="text-header">
+            <h1 id="main-heading" class="text-title">Get Started</h1>
+            <p id="sub-heading" class="text-desc">Create your multi-tenant workspace account</p>
+        </div>
+
+        <div id="google-sso-container">
+            <button class="google-btn">
+                <svg style="width: 20px; height: 20px;" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                Sign up with Google
+            </button>
+            <div class="divider">
+                <span>Or email</span>
+            </div>
+        </div>
+
+        <form onsubmit="event.preventDefault(); alert('Account compiled successfully!');">
+            <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input type="text" placeholder="Ali Khan" class="form-input">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Email Address</label>
+                <input type="email" placeholder="alikhan123@gmail.com" class="form-input">
+            </div>
+            <button type="submit" class="submit-btn">
+                Create Account
+            </button>
+        </form>
+    </div>
+
+    <script>
+        // 1. Fetch live layouts parameters pointing explicitly to Port 4000
+        async function fetchConfig() {
+            try {
+                const res = await fetch('http://localhost:4000/api/config');
+                const config = await res.json();
+                applyUILayout(config.googleSignupEnabled, config.premiumDarkTheme, config.bannerShowingEnabled);
+            } catch (err) {
+                console.error("Failed connecting layout matrix to port 4000 backend API:", err);
+            }
+        }
+
+        // 2. Manipulate DOM workspace classes elements directly based on distinct variable states
+        function applyUILayout(googleEnabled, darkTheme, bannerEnabled) {
+            const body = document.getElementById('app-body');
+            const card = document.getElementById('signup-card');
+            const h1 = document.getElementById('main-heading');
+            const sso = document.getElementById('google-sso-container');
+            const banner = document.getElementById('feature-flag-banner');
+
+            // A. Manage Google button visibility
+            if (googleEnabled) {
+                sso.style.display = 'flex';
+            } else {
+                sso.style.display = 'none';
+            }
+
+            // B. Manage Creative Custom Dynamic Banner Slide Translation
+            if (banner) {
+                if (bannerEnabled) {
+                    banner.classList.add('show');
+                } else {
+                    banner.classList.remove('show');
+                }
+            }
+
+            // C. Switch Frameworks Themes
+            if (googleEnabled || darkTheme) { 
+                body.className = "theme-dark";
+                card.className = "signup-container card-dark";
+                if (h1) h1.style.color = "#ffffff";
+            } else {
+                body.className = "theme-light";
+                card.className = "signup-container card-light";
+                if (h1) h1.style.color = "#334155";
+            }
+        }
+
+        // 3. Connect to streaming WebSocket server on port 3005 for hot live screen updates
+        const socket = io('http://localhost:3005', { query: { tenantId: "bfb97b64-5c80-419b-83c8-683646cc503f" } });
+        
+        socket.on('flagUpdated', (data) => {
+            console.log("📡 Live Stream UI update received:", data);
+            fetchConfig(); // Re-trigger configuration validation check immediately
+        });
+
+        // Initial landing page load bootstrap
+        fetchConfig();
+    </script>
+</body>
+</html>
