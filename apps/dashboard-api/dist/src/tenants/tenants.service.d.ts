@@ -6,11 +6,11 @@ export declare class TenantsService {
     constructor(prisma: PrismaService);
     create(createTenantDto: CreateTenantDto): Promise<{
         environments: {
+            tenantId: string;
+            apiKey: string;
             name: string;
             id: string;
             createdAt: Date;
-            apiKey: string;
-            tenantId: string;
         }[];
     } & {
         name: string;
@@ -19,11 +19,11 @@ export declare class TenantsService {
     }>;
     findAll(): Promise<({
         environments: {
+            tenantId: string;
+            apiKey: string;
             name: string;
             id: string;
             createdAt: Date;
-            apiKey: string;
-            tenantId: string;
         }[];
     } & {
         name: string;
@@ -32,11 +32,11 @@ export declare class TenantsService {
     })[]>;
     findOne(id: string): Promise<({
         environments: {
+            tenantId: string;
+            apiKey: string;
             name: string;
             id: string;
             createdAt: Date;
-            apiKey: string;
-            tenantId: string;
         }[];
     } & {
         name: string;

@@ -1,0 +1,247 @@
+/* Core Layout Settings */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  background-color: #000000;
+  color: #e4e4e7;
+}
+
+/* 1. Split Screen Dashboard Layout */
+.split-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.left-panel {
+  width: 45%;
+  background-color: #09090b;
+  border-right: 1px solid #18181b;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 4rem;
+}
+
+.right-panel {
+  width: 55%;
+  background-color: #030303;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 4rem;
+  position: relative;
+}
+
+/* 2. Custom Typography & Forms */
+.brand-header {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: #ffffff;
+}
+
+.brand-green {
+  color: #10b981;
+}
+
+.form-wrapper {
+  max-width: 24rem;
+  margin: auto;
+  width: 100%;
+}
+
+.form-title {
+  font-size: 1.875rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.025em;
+  margin-bottom: 2rem;
+}
+
+.input-group {
+  margin-bottom: 1.25rem;
+}
+
+.input-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #71717a;
+  margin-bottom: 0.5rem;
+}
+
+.custom-input {
+  width: 100%;
+  background-color: #18181b;
+  border: 1px solid #27272a;
+  border-radius: 0.375rem;
+  padding: 0.75rem;
+  color: #f4f4f5;
+  font-size: 0.875rem;
+}
+
+.custom-input:focus {
+  outline: none;
+  border-color: #10b981;
+}
+
+.btn-primary {
+  width: 100%;
+  background-color: #059669;
+  color: #000000;
+  font-weight: 700;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-primary:hover {
+  background-color: #10b981;
+}
+
+/* 3. Popup Overlay Grid */
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.popup-card {
+  background-color: #09090b;
+  border: 1px solid #27272a;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  max-width: 24rem;
+  width: 100%;
+  text-align: center;
+}
+
+.token-box {
+  background-color: #18181b;
+  padding: 0.75rem;
+  border-radius: 0.25rem;
+  font-family: monospace;
+  font-size: 0.75rem;
+  margin: 1rem 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 4. Feature Matrix Core Grid Table */
+.matrix-wrapper {
+  max-width: 72rem;
+  margin: auto;
+  padding: 3rem;
+}
+
+.matrix-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #18181b;
+  padding-bottom: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.matrix-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #09090b;
+  border: 1px solid #18181b;
+  border-radius: 0.75rem;
+}
+
+.matrix-table th, .matrix-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #18181b;
+}
+
+.matrix-table th {
+  background-color: #18181b;
+  color: #a1a1aa;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* --- Conventional Sliding Toggle Switch --- */
+.switch-control {
+  position: relative;
+  display: inline-flex;
+  width: 2.75rem;
+  height: 1.5rem;
+  background-color: #27272a; /* Zinc 800 (Off state) */
+  border-radius: 9999px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  align-items: center;
+  padding: 0 0.15rem;
+}
+
+.switch-control.active {
+  background-color: #10b981; /* Emerald 500 (On state) */
+}
+
+.switch-handle {
+  width: 1.2rem;
+  height: 1.2rem;
+  background-color: #ffffff;
+  border-radius: 50%;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.switch-control.active .switch-handle {
+  transform: translateX(1.25rem); /* Knobs shifts cleanly right */
+}
+
+.switch-control:hover {
+  opacity: 0.9;
+}
+
+/* Floating Action Button */
+.floating-btn {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 3.5rem;
+  height: 3.5rem;
+  background-color: #059669;
+  color: #000000;
+  border: none;
+  border-radius: 50%;
+  font-size: 1.75rem;
+  font-weight: 900;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.4);
+  transition: all 0.2s ease;
+}
+
+.floating-btn:hover {
+  background-color: #10b981;
+  transform: scale(1.05);
+}
+
+.floating-btn:active {
+  transform: scale(0.95);
+}
+
+@media (max-width: 1024px) {
+  .left-panel { width: 100%; border-right: none; }
+  .right-panel { display: none; }
+}

@@ -6,11 +6,11 @@ export declare class TenantsController {
     constructor(tenantsService: TenantsService);
     create(createTenantDto: CreateTenantDto): Promise<{
         environments: {
+            tenantId: string;
+            apiKey: string;
             name: string;
             id: string;
             createdAt: Date;
-            apiKey: string;
-            tenantId: string;
         }[];
     } & {
         name: string;
@@ -19,11 +19,11 @@ export declare class TenantsController {
     }>;
     findAll(): Promise<({
         environments: {
+            tenantId: string;
+            apiKey: string;
             name: string;
             id: string;
             createdAt: Date;
-            apiKey: string;
-            tenantId: string;
         }[];
     } & {
         name: string;
@@ -32,11 +32,11 @@ export declare class TenantsController {
     })[]>;
     findOne(id: string): Promise<({
         environments: {
+            tenantId: string;
+            apiKey: string;
             name: string;
             id: string;
             createdAt: Date;
-            apiKey: string;
-            tenantId: string;
         }[];
     } & {
         name: string;
