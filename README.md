@@ -239,8 +239,8 @@ Example payload
 
 ```json
 {
-  "flagId": "cd973331-54e4-45c1-a3ba-c2adf7a3831a",
-  "environmentId": "83e95832-13bf-4eca-a065-516d517cf056",
+  "flagId": "********************************",
+  "environmentId": "*****************",
   "environmentName": "Development",
   "isEnabled": true
 }
